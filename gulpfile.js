@@ -7,6 +7,7 @@ const concat = require('gulp-concat');
 const pug = require('gulp-pug');
 const del = require('del');
 const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
 
 
 /*---------- Server ----------*/
@@ -22,6 +23,16 @@ gulp.task('server', () => {
 
     gulp.watch('./build/**/*').on('change', browserSync.reload);
 
+});
+
+/*---------- JavaScript ----------*/
+gulp.task('compile-scripts', () => {
+    return gulp.src('./source/js/**/*.js')
+        .pipe(concat('main.js'))
+        .pipe(babel({
+            presets: ['es2015']
+        }))
+        .pipe(gulp.dest('./build/js/'))
 });
 
 /*---------- Pug ----------*/
@@ -66,6 +77,7 @@ gulp.task('watch', () => {
     
     gulp.watch('./source/templates/**/*.pug', gulp.series('compile-templates'));
     gulp.watch('./source/styles/**/*.styl', gulp.series('compile-styles'));
+    gulp.watch('./source/js/**/*.js', gulp.series('compile-scripts'));
 
 });
 
@@ -123,7 +135,7 @@ gulp.task('del-build', () => {
 /*---------- Default ----------*/
 gulp.task('default', gulp.series(
     'del-build',
-    gulp.parallel('copy-fonts', 'copy-images', 'compile-templates', 'compile-styles'),
+    gulp.parallel('copy-fonts', 'copy-images', 'compile-templates', 'compile-styles', 'compile-scripts'),
     gulp.parallel('watch', 'server')
     )
 );
