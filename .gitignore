@@ -1,8 +1,6 @@
 # Build folder of project
 build
 
-*.gitkeep
-
 # Logs
 logs
 *.log
